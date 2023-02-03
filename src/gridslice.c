@@ -30,11 +30,11 @@
  * ------------ ----------  ----------- --------------------------
  * 11/17/09     3580        brockwoo    Initial Creation
  * 11/19/13     2495        bclement    changed dim arrays/lists to use npy_intp
+ * Aug 14, 2019 7880        tgurney     Python 3 fixes
  *
  * </pre>
  *
  * @author brockwoo
- * @version 1
  */
 
 #include <Python.h>
@@ -355,12 +355,21 @@ static PyMethodDef gridslice_methods[] = { { "defineNumpySlice",
 		NULL, NULL, 0, NULL } /* sentinel */
 };
 
-void initgridslice(void) {
+static struct PyModuleDef gridslice_module = {
+	PyModuleDef_HEAD_INIT,
+	"gridslice",
+	"",
+	-1,
+	gridslice_methods
+};
+
+PyMODINIT_FUNC PyInit_gridslice(void) {
 	PyObject *m;
 	import_array();
 	PyImport_AddModule("gridslice");
-	m = Py_InitModule("gridslice", gridslice_methods);
+	m = PyModule_Create(&gridslice_module);
 	GridSliceError = PyErr_NewException("gridslice.error", NULL, NULL);
 	Py_INCREF(GridSliceError);
 	PyModule_AddObject(m, "error", GridSliceError);
+	return m;
 }
